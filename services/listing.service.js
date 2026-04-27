@@ -48,7 +48,7 @@ const createListing = async (providerId, listingData) => {
 };
 
 const queryListings = async (filter, options) => {
-  const query = { isActive: true };
+  const query = {  };
 
   // Map filters
   if (filter.category) query.category = filter.category;
