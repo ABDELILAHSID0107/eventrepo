@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Firebase Auth Tester</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #4285f4; color: white; border: none; border-radius: 4px; }
+    textarea { width: 100%; height: 150px; margin-top: 10px; font-family: monospace; padding: 10px; box-sizing: border-box; }
+    .hidden { display: none; }
+    .box { margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <h2>Firebase ID Token Generator</h2>
+  <p>Use this page to generate a Firebase ID Token for Postman testing.</p>
+
+  <div class="box">
+    <h3>1. Setup</h3>
+    <p>Open this HTML file in your code editor and replace the <code>firebaseConfig</code> object with your actual Web App config from the Firebase Console.</p>
+  </div>
+
+  <div class="box">
+    <h3>2. Generate Token</h3>
+    <button id="loginBtn">Login with Google</button>
+    <p id="status"></p>
+    
+    <div id="resultBox" class="hidden">
+      <h4>Success! Here is your ID Token:</h4>
+      <p><small>Copy this entire token and paste it into your Postman POST request to <code>/api/v1/auth/firebase-login</code></small></p>
+      <textarea id="tokenArea" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- Firebase SDKs (Modular v9/v10) via CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+    // TODO: PASTE YOUR FIREBASE WEB CONFIG HERE
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMuGxlM2CH8_lG1SFJFYX91-i5atfwC9E",
+      authDomain: "fette-salle-dz.firebaseapp.com",
+      projectId: "fette-salle-dz",
+      storageBucket: "fette-salle-dz.firebasestorage.app",
+      messagingSenderId: "195739907412",
+      appId: "1:195739907412:web:325160e7d5880ae71204c1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const loginBtn = document.getElementById('loginBtn');
+    const status = document.getElementById('status');
+    const resultBox = document.getElementById('resultBox');
+    const tokenArea = document.getElementById('tokenArea');
+
+    loginBtn.addEventListener('click', async () => {
+      try {
+        if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+            alert("Please edit the HTML file and add your real firebaseConfig first!");
+            return;
+        }
+
+        status.innerText = "Opening Google Login...";
+        const result = await signInWithPopup(auth, provider);
+        
+        status.innerText = `Logged in successfully as ${result.user.email}. Fetching token...`;
+        
+        // Get the ID Token
+        const idToken = await result.user.getIdToken();
+        
+        // Display it
+        tokenArea.value = idToken;
+        resultBox.classList.remove('hidden');
+        status.innerText = "";
+        
+      } catch (error) {
+        console.error(error);
+        status.innerText = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
