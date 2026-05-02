@@ -35,8 +35,8 @@ app.post(
 );
 
 // Request Parsing
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Data Sanitization (Fix for Express 4.19+ getter crash with older packages)
 app.use((req, res, next) => {
