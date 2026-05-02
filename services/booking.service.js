@@ -124,14 +124,15 @@ const getBookingById = async (bookingId, userId, userRole) => {
   return booking;
 };
 
+
 const acceptBooking = async (bookingId, providerId) => {
   const booking = await getBookingById(bookingId, providerId, 'provider');
   
-  if (booking.status !== 'confirmed') {
+  if (booking.status !== 'pending_payment') {
     throw new ApiError(400, `Cannot accept booking with status: ${booking.status}`);
   }
 
-  booking.status = 'in_progress';
+  booking.status = 'confirmed';
   await booking.save();
   return booking;
 };
@@ -139,7 +140,7 @@ const acceptBooking = async (bookingId, providerId) => {
 const rejectBooking = async (bookingId, providerId, reason) => {
   const booking = await getBookingById(bookingId, providerId, 'provider');
   
-  if (booking.status !== 'confirmed') {
+  if (booking.status !== 'pending_payment') {
     throw new ApiError(400, `Cannot reject booking with status: ${booking.status}`);
   }
 
